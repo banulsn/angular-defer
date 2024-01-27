@@ -1,0 +1,375 @@
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h3 class="text-center">Angular Defer</h3>
+      <p>Elementem podstawowym jest szablon reprezentowany przez następującą grupę bloków:
+        <strong>{{'{#defer}...{/defer}'}}</strong>. Zależności
+        (komponenty, dyrektywy itp.), do których odwołuje się odroczony blok, są ładowane leniwie. W rezultacie
+        odroczone
+        bloki są zawsze renderowane asynchronicznie. Obejmuje to wszystkie zależności w ramach odroczonego bloku, które
+        obejmują komponenty, dyrektywy i potoki używane w ramach tych zależności.</p>
+      <p>
+        Koncepcyjnie {{'@defer'}} jest konstrukcją, która po uruchomieniu zastępuje zawartość zastępczą treścią
+        ładowaną leniwie. Programiści mają dwie opcje konfiguracji, kiedy ta zamiana jest wyzwalana: <strong>on</strong>
+        i <strong>when</strong>.
+      </p>
+      <p>
+        <strong>when</strong> określa warunek rozkazujący w formie wyrażenia zwracającego wartość logiczną. Kiedy to
+        wyrażenie staje się
+        prawdziwe, symbol zastępczy jest zamieniany na leniwie ładowaną treść (co może być operacją asynchroniczną,
+        jeśli konieczne jest pobranie zależności).
+      </p>
+      <p>
+        Co najważniejsze, jeśli warunek <strong>when</strong> zmieni się z powrotem na false, blok odroczenia nie
+        zostanie przywrócony z
+        powrotem do elementu zastępczego. Zamiana jest operacją jednorazową. Jeśli zawartość bloku powinna być
+        renderowana warunkowo, w samym bloku można zastosować warunek if.
+      </p>
+      <p>
+        <strong>on</strong> określa deklaratywny warunek wyzwalacza, zwykle jakiś rodzaj zdarzenia. Będziemy mieli serię
+        predefiniowanych
+        wyzwalaczy zdarzeń (<strong>interaction, hover, idle, viewport, immediate, timer(x seconds)</strong>).
+      </p>
+    </div>
+  </div>
+  <hr class="border border-dark border-3">
+  <div class="row">
+    <div class="col">
+      <h3 class="text-center">Przykłady</h3>
+      <h3>&#64;defer when</h3>
+
+      <div>
+        <input #checkboxDefer
+               type="checkbox"
+               [checked]="isCheckedDefer()"
+               (change)="isCheckedDefer.set(checkboxDefer.checked)"
+               id="checkboxDefer"/>
+        <label for="checkboxDefer">&nbsp;&nbsp;Załaduj <strong class="text-success">app-green</strong> komponent</label>
+      </div>
+      <br>
+      <div class="card card-body">
+        @defer (when isCheckedDefer()) {
+          <app-green/>
+        }
+        @placeholder {
+          <div>Tu będzie komponent <span class="text-success">app-green</span> po odklikaniu checkboxa</div>
+        }
+        @error {
+          <span>Error podcza ładowania <strong>app-green</strong> komponentu</span>
+        }
+        @loading(minimum 3s) {
+          <div>Loading...</div>
+        }
+      </div>
+
+
+
+      <br><code>
+      <![CDATA[
+      @defer (when isCheckedDefer()) {
+      <app-green/>
+      }
+      ]]>
+      <br>
+      <![CDATA[
+      @placeholder {
+      <div>Tu będzie komponent <span class="text-success">app-green</span></div>
+      }
+      ]]>
+      <br>
+      <![CDATA[
+      @error {
+      <span>Error podcza ładowania <strong>app-green</strong> komponentu</span>
+      }
+      ]]>
+      <br>
+      <![CDATA[
+      @loading(minimum 3s) {
+      <div>Loading...</div>
+      }
+      ]]>
+    </code>
+      <br><br>
+      <hr class="border border-dark border-2">
+
+
+
+
+      <h3>&#64;defer on interaction</h3>
+      <div class="card card-body">
+        @defer (on interaction) {
+          <span>Clicked</span>
+        }
+        @placeholder {
+          <span>Placeholder (click on it!)</span>
+        }
+      </div>
+
+
+
+
+      <br><code>
+      <![CDATA[
+      @defer (on interaction) {
+      <span>Clicked</span>
+      }
+      ]]>
+      <br>
+      <![CDATA[
+      @placeholder {
+      <span>Placeholder (click on it!)</span>
+      }
+      ]]>
+    </code>
+      <br><br>
+      <hr class="border border-dark border-2">
+
+
+
+
+      <h3>&#64;defer on hover</h3>
+      <div class="card card-body">
+        @defer (on hover) {
+          <span>Hovered</span>
+        }
+        @placeholder {
+          <span>Placeholder (hover it!)</span>
+        }
+      </div>
+
+
+
+      <br><code>
+      <![CDATA[
+      @defer (on hover) {
+      <span>Hovered</span>
+      }
+      ]]>
+      <br>
+      <![CDATA[
+      @placeholder {
+      <span>Placeholder (hover it!)</span>
+      }
+      ]]>
+    </code>
+      <br><br>
+      <hr class="border border-dark border-2">
+
+
+      <h3>&#64;defer on hover ze zmienną referencyjną</h3>
+      <br>
+      <div #greeting>Hello!</div>
+      <br>
+      <div class="card card-body">
+
+        @defer (on hover(greeting)) {
+        <span>Hovered Hello!</span>
+        } @placeholder {
+        <div>Calendar placeholder</div>
+        }
+      </div>
+
+
+
+      <br><code>
+      <![CDATA[
+      <div #greeting>Hello!</div>
+      ]]>
+      <br>
+      <![CDATA[
+      @defer (on hover(greeting)) {
+      <span>Hovered Hello!</span>
+      }
+      ]]>
+      <br>
+      <![CDATA[
+      @placeholder {
+      <div>Calendar placeholder</div>
+      }
+      ]]>
+    </code>
+      <br><br>
+      <hr class="border border-dark border-2">
+
+
+
+      <h3>&#64;defer on immediate</h3>
+      <div class="card card-body">
+        @defer (on immediate) {
+          <span>Immediate</span>
+        }
+        @placeholder {
+          <span>Placeholder immediate)</span>
+        }
+      </div>
+
+
+
+      <br><code>
+      <![CDATA[
+      @defer (on immediate) {
+      <span>Immediate</span>
+      }
+      ]]>
+      <br>
+      <![CDATA[
+      @placeholder {
+      <span>Placeholder immediate)</span>
+      }
+      ]]>
+    </code>
+      <br><br>
+      <hr class="border border-dark border-2">
+
+
+      <h3>&#64;defer on idle</h3>
+      <div class="card card-body">
+        @defer (on idle) {
+          <span>Browser has reached an idle state</span>
+        }
+        @placeholder {
+          <span>Placeholder</span>
+        }
+      </div>
+
+
+
+      <br><code>
+      <![CDATA[
+      @defer (on idle) {
+      <span>Browser has reached an idle state</span>
+      }
+      ]]>
+      <br>
+      <![CDATA[
+      @placeholder {
+      <span>Placeholder</span>
+      }
+      ]]>
+    </code>
+      <br><br>
+      <hr class="border border-dark border-2">
+
+
+
+      <h3>&#64;defer on timer(5s)</h3>
+      <div class="card card-body">
+        @defer (on timer(5s)) {
+          <span>Visible after 5s</span>
+        }
+        @placeholder {
+          <span style="color: red">Placeholder</span>
+        }
+      </div>
+
+
+
+      <br><code>
+      <![CDATA[
+      @defer (on timer(5s)) {
+      <span>Visible after 5s</span>
+      }
+      ]]>
+      <br>
+      <![CDATA[
+      @placeholder {
+      <span style="color: red">Placeholder</span>
+      }
+      ]]>
+    </code>
+      <br><br>
+      <hr class="border border-dark border-2">
+
+
+
+      <h3>Prefetch</h3>
+      <div class="card card-body">
+        @defer (on interaction; prefetch on hover) {
+          <app-blue/>
+        }
+        @placeholder {
+          <span>Placeholder (hover it, then click on it!)</span>
+        }
+      </div>
+
+
+
+      <br><code>
+      <![CDATA[
+      @defer (on interaction; prefetch on hover) {
+      <app-blue/>
+      }
+      ]]>
+      <br>
+      <![CDATA[
+      @placeholder {
+      <span>Placeholder (hover it, then click on it!)</span>
+      }
+      ]]>
+    </code>
+      <br><br>
+      <hr class="border border-dark border-2">
+
+
+
+      <h3>&#64;defer on viewport</h3>
+      <div class="card card-body">
+        @defer (on viewport) {
+          <app-red text="The block entered the viewport"/>
+        }
+        @placeholder {
+          <span>Placeholder</span>
+        }
+      </div>
+      <br><code>
+      <![CDATA[
+      @defer (on viewport) {
+      <app-red text="The block entered the viewport"/>
+      }
+      ]]>
+      <br>
+      <![CDATA[
+      @placeholder {
+      <span>Placeholder</span>
+      }
+      ]]>
+    </code>
+      <br><br>
+
+      <hr class="border border-dark border-2">
+
+
+
+      <h3>&#64;defer on viewport ze zmienną referencyjną</h3>
+      <br>
+      <div #viewport>Hello!</div>
+      <br>
+      <div class="card card-body">
+        @defer (on viewport(viewport)) {
+        <app-red text="Hello entered the viewport"/>
+        }
+        @placeholder {
+        <span>Placeholder</span>
+        }
+      </div>
+      <br><code>
+      <![CDATA[
+      <div #viewport>Hello!</div>
+      ]]>
+      <br>
+      <![CDATA[
+      @defer (on viewport(viewport)) {
+      <app-red text="Hello entered the viewport"/>
+      }
+      ]]>
+      <br>
+      <![CDATA[
+      @placeholder {
+      <span>Placeholder</span>
+      }
+      ]]>
+    </code>
+      <br><br><br>
+    </div>
+  </div>
+</div>
